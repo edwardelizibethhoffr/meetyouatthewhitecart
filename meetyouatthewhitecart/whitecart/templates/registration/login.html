@@ -1,0 +1,38 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <div class="center">
+    {% if form.errors %}
+        <p>Your username and password didn't match. Please try again.</p>
+    {% endif %}
+
+    <form method="post" action = "{% url 'register' %}">
+        {% csrf_token %}
+
+        {% if username %}
+            <div class="alert alert-danger alert-dismissible">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {{ username }}
+            </div>
+            <br>
+        {% endif %}
+        <br>
+        <table>
+            <tr>
+                <td>What is your name?</td>
+            </tr>
+            <tr>
+                <td>{{ form.username }}</td>
+            </tr>
+
+        </table>
+    <br>
+    <br>
+        <div class="center" style="text-align:center;">
+        <input class="center" id="login-button" type="submit" value="login" style="margin-left: auto; margin-right: auto;" />
+        <input type="hidden" name="next" value="{{ next }}" />
+        </div>
+    </form>
+    </div>
+
+{% endblock %}

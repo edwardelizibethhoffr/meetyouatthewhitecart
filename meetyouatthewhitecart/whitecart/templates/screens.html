@@ -1,0 +1,73 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+    <script>
+    $.ajaxSetup({
+     beforeSend: function(xhr, settings) {
+         function getCookie(name) {
+             var cookieValue = null;
+             if (document.cookie && document.cookie != '') {
+                 var cookies = document.cookie.split(';');
+                 for (var i = 0; i < cookies.length; i++) {
+                     var cookie = jQuery.trim(cookies[i]);
+                     // Does this cookie string begin with the name we want?
+                     if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                         cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                         break;
+                     }
+                 }
+             }
+             return cookieValue;
+         }
+         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+             // Only send the token to relative URLs i.e. locally.
+             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+         }
+     }
+});
+    </script>
+
+     <script>
+         function squareSelected(id, x, y){
+             $.ajax({
+                 url: "select-square",
+                 method: "POST",
+                 data:  JSON.stringify({'x': x, 'y': y}),
+                 dataType: "json",
+                 success: function(data) {
+                     if (data[0]['success'] == 'true') {
+                        $(id).attr('style', 'background-color: white;');
+                     }
+                 }
+             });
+         };
+     </script>
+
+    <div id="square-table" class="center">
+        <table>
+            <tbody>
+            <tr>
+            {% for row in array %}
+            <td><table>
+                {% for column in row %}
+                    <tr>
+                        <td>
+                            {% csrf_token %}
+                            <button class="{{ column.class }} square-hover"
+                                    onclick="squareSelected('#square{{ column.x }}{{ column.y }}', {{ column.x }}, {{ column.y }})"
+                                    id="square{{ column.x }}{{ column.y }}">
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table></td>
+            {% endfor %}
+            </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+
+{% endblock %}
